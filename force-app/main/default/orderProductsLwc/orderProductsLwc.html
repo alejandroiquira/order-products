@@ -1,0 +1,20 @@
+<template>  
+    <lightning-card title="Order products" icon-name="action:download">
+
+      <h2><b>Order RecordId:</b> {recordId}</h2>
+      <lightning-button 
+        slot="actions" 
+        label="Activate" 
+        onclick={activateOrder}>
+      </lightning-button>  
+      <div class="slds-box">  
+        <lightning-datatable 
+            key-field="Id" 
+            data={products} 
+            columns={cols}  
+            >
+        </lightning-datatable>  
+      </div>  
+
+    </lightning-card>  
+  </template>  
