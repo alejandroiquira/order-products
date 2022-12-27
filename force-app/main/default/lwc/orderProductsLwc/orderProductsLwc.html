@@ -8,8 +8,6 @@
     <!-- /loader -->
     <lightning-card title="Order products" icon-name="action:download">
 
-      Counter : <lightning-formatted-number value={counter}></lightning-formatted-number>
-
       <h2><b>Order Id=</b> {recordId}</h2>
       <lightning-button 
         slot="actions" 
@@ -21,6 +19,7 @@
             key-field="Id" 
             data={products} 
             columns={cols}  
+            hide-checkbox-column="true"
             >
         </lightning-datatable>  
       </div>  

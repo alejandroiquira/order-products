@@ -1,13 +1,13 @@
 import { LightningElement,wire,track,api} from 'lwc';  
   import {refreshApex} from '@salesforce/apex';  
-  import getOrderProducts from '@salesforce/apex/ProductUtility.getOrderProductsList'; 
-  import getOrderProductsImperative from '@salesforce/apex/ProductUtility.getOrderProductsListImperative';   
-  import activateOrder from '@salesforce/apex/ProductUtility.activateOrder';  
+  import getOrderProducts from '@salesforce/apex/orderProductLwc.getOrderProductsList'; 
+  import getOrderProductsImperative from '@salesforce/apex/orderProductLwc.getOrderProductsListImperative';   
+  import activateOrder from '@salesforce/apex/orderProductLwc.activateOrder';  
   import { ShowToastEvent } from 'lightning/platformShowToastEvent'
   import { subscribe,MessageContext } from 'lightning/messageService';
   import UPDATE_ORDER_PRODUCT_FILE from '@salesforce/messageChannel/updateOrderProducts__c';
   const COLS=[  
-  {label:'Name',fieldName:'Product2.Name', type:'text'},   
+  {label:'Name:',fieldName:'Name', type:'text'},   
   {label:'Quantity',fieldName:'Quantity', type:'number'}  ,   
   {label:'Unit Price',fieldName:'UnitPrice', type:'currency'}  ,   
   {label:'Total Price',fieldName:'TotalPrice', type:'currency'}  
@@ -43,8 +43,7 @@ import { LightningElement,wire,track,api} from 'lwc';
         );
     }
     handleMessage(message){
-        if(message.operator == 'add'){
-            this.counter += message.constant;
+        if(message.productAddedMessage == 'Product Added'){
             getOrderProductsImperative({orderid : this.recordId})
             .then(result=>{
               this.products= result;
@@ -53,19 +52,14 @@ import { LightningElement,wire,track,api} from 'lwc';
             .catch(error=>{
               alert('Error refreshing order product Added'+JSON.stringify(error));  
             });
-            //return refreshApex(this.products);  
         }
     }
       
     activateOrder(){
-        
-      console.log("ActivateOrder1");
       activateOrder({orderid : this.recordId}).then(result=>
         {
           console.log("ActivateOrder2");
           this.showToast('Order activated. Please refresh the page.', result, 'Success', 'dismissable');
-          //eval("$A.get('e.force:refreshView').fire();");
-          this.updateRecordView();
         }
       ).catch(error=>{  
         alert('Error activating order'+JSON.stringify(error));  
@@ -80,12 +74,6 @@ import { LightningElement,wire,track,api} from 'lwc';
           mode: mode
       });
       this.dispatchEvent(event);
-    }
-  
-    updateRecordView() {
-      setTimeout(() => {
-           eval("$A.get('e.force:refreshView').fire();");
-      }, 1000); 
     }
 
  }

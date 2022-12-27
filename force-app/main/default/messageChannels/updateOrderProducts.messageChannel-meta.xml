@@ -3,9 +3,6 @@
     <masterLabel>updateOrderProducts</masterLabel>
     <isExposed>True</isExposed>
     <lightningMessageFields>
-        <fieldName>operator</fieldName>
-    </lightningMessageFields>
-    <lightningMessageFields>
-        <fieldName>constant</fieldName>
+        <fieldName>productAddedMessage</fieldName>
     </lightningMessageFields>
 </LightningMessageChannel>

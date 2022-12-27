@@ -2,10 +2,24 @@ public with sharing class ProductUtility {
 
   
     @AuraEnabled(cacheable=true)  
-    public static List<PricebookEntry> getProductList(Id orderId){  
+    public static List<availableProductWrapper> gePriceBookProducts(Id orderId){  
         
         Id pricebookId = getPricebookid(orderId);
+        list<availableProductWrapper> apWrapperList = new list<availableProductWrapper>();
+        for ( PricebookEntry pbE: [SELECT Id, Product2.Name, UnitPrice, Product2Id From PricebookEntry 
+                                      where Pricebook2id=:pricebookId limit 8]  ){
 
+            apWrapperList.add(new availableProductWrapper(pbE));
+        }
+        return apWrapperList;
+    }
+
+    @AuraEnabled
+    public static List<PricebookEntry> searchPriceBookProducts(Id orderId){  
+        
+        System.debug('getPriceBookProducts orderid'+orderId);
+        Id pricebookId = getPricebookid(orderId);
+        System.debug('getPriceBookProducts pricebookId'+pricebookId);
         return [SELECT Id, Product2.Name, UnitPrice, Product2Id
                 From PricebookEntry 
                 where Pricebook2id=:pricebookId
@@ -70,40 +84,26 @@ public with sharing class ProductUtility {
 
     }  
 
-    @AuraEnabled(cacheable=true)  
-    public static List<OrderItem> getOrderProductsList(id orderid){  
-        
-        return [SELECT Id, Product2id, Product2.Name, Quantity, UnitPrice, TotalPrice
-                From OrderItem 
-                where OrderId = :orderid];  
+    public class availableProductWrapper{
+        @AuraEnabled
+        public PricebookEntry pbe;
+        @AuraEnabled
+        public Id Id;
+        @AuraEnabled
+        public String Name;
+        @AuraEnabled
+        public String productLink;
+        @AuraEnabled
+        public decimal UnitPrice;
 
-    }
+        public availableProductWrapper(PricebookEntry pbe){
 
-    @AuraEnabled 
-    public static List<OrderItem> getOrderProductsListImperative(id orderid){  
-        
-        return [SELECT Id, Product2id, Product2.Name, Quantity, UnitPrice, TotalPrice
-                From OrderItem 
-                where OrderId = :orderid];  
-
-    }
-
-    @AuraEnabled
-    public static void activateOrder(id orderid){  
-
-        system.debug('activateOrder orderid:'+orderid);
-        Order o =[select id, ContractId, Status from order where id=:orderid];
-        Contract c = [select id, status from contract where id = :o.ContractId];
-        
-        if(c.status != 'Activated'){
-            c.status='Activated';
-            update c;
+            this.pbe = pbe;
+            this.Id = pbe.id;
+            this.Name = pbe.Product2.Name;
+            this.productLink = '/' + pbe.Id;
+            this.UnitPrice = pbe.UnitPrice;
         }
-        system.debug('activateOrder Contract updated:'+c);
-
-        o.status='Activated';        
-        update o;
 
     }
-
 }

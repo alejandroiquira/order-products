@@ -1,17 +1,19 @@
+//Availableproducts.js
 import { LightningElement,wire,track,api} from 'lwc';  
  import {refreshApex} from '@salesforce/apex';  
- import getProducts from '@salesforce/apex/ProductUtility.getProductList';  
+ import gePriceBookProducts from '@salesforce/apex/ProductUtility.gePriceBookProducts';  
+ import searchPriceBookProducts from '@salesforce/apex/ProductUtility.searchPriceBookProducts';  
  import addProductsToOrder from '@salesforce/apex/ProductUtility.addProductsToOrder';  
  import { ShowToastEvent } from 'lightning/platformShowToastEvent'
  import {publish,MessageContext} from 'lightning/messageService';
  import UPDATE_ORDER_PRODUCT_FILE from '@salesforce/messageChannel/updateOrderProducts__c';
  
  const COLS=[  
-   {label:'Name',fieldName:'Product2.Name', type:'text'},   
+   {label:'Name',fieldName:'Name', type:'text'},   
    {label:'Price',fieldName:'UnitPrice', type:'currency'}  
  ];  
 
- export default class DataTableInLwc extends LightningElement {  
+ export default class DataTableInLwc extends LightningElement {
     @api recordId;
     cols=COLS;  
     products;
@@ -19,13 +21,31 @@ import { LightningElement,wire,track,api} from 'lwc';
     @wire(MessageContext)
     messageContext;
   
-    @wire(getProducts,{orderId: '$recordId'}) productList (result){
+    @wire(gePriceBookProducts,{orderId: '$recordId'}) productList (result){
       if(result.data){
         this.products=result.data;
         console.log("productlist:"+result.data);
         console.dir(result.data);
       }
     };  
+   
+    searchKey ='';
+
+    handleOnChange(event){
+        let key=event.target.value;
+        console.log("Search key recordId:"+this.recordId);
+        
+        /*searchPriceBookProducts({orderid : this.recordId})
+        .then(result=>{
+          console.log("ejecuta searchpricebookProducts");
+          this.products= result;
+        })
+        .catch(error=>{
+          alert('Error refreshing order product Added'+JSON.stringify(error));  
+        }); */
+
+
+    }
 
     addProducts(){  
       console.log("addProducts"+this.recordId);
@@ -35,12 +55,11 @@ import { LightningElement,wire,track,api} from 'lwc';
         .then(result=>{  
           console.log("addProducts selectedRecords",selectedRecords);
           const payload ={
-              operator :'add',
-              constant:1
+            productAddedMessage :'Product Added'
         };
         publish(this.messageContext,UPDATE_ORDER_PRODUCT_FILE,payload);
         this.showToast('Products added to the order.', result, 'Success', 'dismissable');
-        return refreshApex(this.products);  
+        
       })  
       .catch(error=>{  
         alert('Error getting Available products'+JSON.stringify(error));  

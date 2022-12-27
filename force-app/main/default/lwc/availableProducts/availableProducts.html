@@ -1,8 +1,8 @@
 <template>  
-    <lightning-card title="Available products" icon-name="action:download">
+    
+    <lightning-input label="Search Product" value={searchKey} onchange={handleOnChange} type="search"></lightning-input>
 
-      <h2><b>Order RecordId:</b> {recordId}</h2>
-      <lightning-input label="Search Product" value={searchKey} onchange={handleOnChange} type="search"></lightning-input>
+    <lightning-card title="Available products" icon-name="action:download">
 
       <lightning-button 
         slot="actions" 
