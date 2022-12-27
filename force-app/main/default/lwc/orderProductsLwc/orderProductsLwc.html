@@ -1,7 +1,15 @@
 <template>  
+      <!-- loader -->
+    <div if:true={isLoading}>
+        <lightning-spinner
+            alternative-text="Loading..." variant="brand" class="slds-is-fixed">
+        </lightning-spinner>
+    </div>
+    <!-- /loader -->
     <lightning-card title="Order products" icon-name="action:download">
 
-      <h2><b>Order RecordId:</b> {recordId}</h2>
+
+      <h2><b>Order Id:</b> {recordId}</h2>
       <lightning-button 
         slot="actions" 
         label="Activate" 
@@ -17,4 +25,4 @@
       </div>  
 
     </lightning-card>  
-  </template>  
+  </template>
