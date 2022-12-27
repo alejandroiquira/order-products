@@ -8,9 +8,14 @@ import { LightningElement,wire,track,api} from 'lwc';
  import {publish,MessageContext} from 'lightning/messageService';
  import UPDATE_ORDER_PRODUCT_FILE from '@salesforce/messageChannel/updateOrderProducts__c';
  
- const COLS=[  
-   {label:'Name',fieldName:'Name', type:'text'},   
-   {label:'Price',fieldName:'UnitPrice', type:'currency'}  
+ const COLS=[ 
+    {label : 'Product Name',fieldName : 'productLink',type : 'url',
+        typeAttributes :{
+            label : {fieldName : 'Name'},
+            target : '_blank'
+        }
+    },  
+    {label:'Price',fieldName:'UnitPrice', type:'currency'}  
  ];  
 
  export default class DataTableInLwc extends LightningElement {

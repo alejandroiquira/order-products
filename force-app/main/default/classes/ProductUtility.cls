@@ -7,7 +7,7 @@ public with sharing class ProductUtility {
         Id pricebookId = getPricebookid(orderId);
         list<availableProductWrapper> apWrapperList = new list<availableProductWrapper>();
         for ( PricebookEntry pbE: [SELECT Id, Product2.Name, UnitPrice, Product2Id From PricebookEntry 
-                                      where Pricebook2id=:pricebookId limit 8]  ){
+                                      where Pricebook2id=:pricebookId limit 50]  ){
 
             apWrapperList.add(new availableProductWrapper(pbE));
         }
@@ -59,9 +59,9 @@ public with sharing class ProductUtility {
         
         // Get current products related to the order
         Map<Id, OrderItem> mapExistentProd = new Map<Id, OrderItem>();
-        for(OrderItem oi: [select id, Product2Id, Quantity from OrderItem where OrderId= :orderId]){
-            if(!mapExistentProd.containsKey(oi.Product2Id))
-                mapExistentProd.put(oi.Product2Id, oi);
+        for(OrderItem oi: [select id, Product2Id, Quantity,PricebookEntryId from OrderItem where OrderId= :orderId]){
+            if(!mapExistentProd.containsKey(oi.PricebookEntryId))
+                mapExistentProd.put(oi.PricebookEntryId, oi);
         }
         System.debug('addProductsToOrder mapExistentProd:'+ mapExistentProd);
 
@@ -69,8 +69,8 @@ public with sharing class ProductUtility {
         for(PricebookEntry p: productList){
             OrderItem oi;
             // If product already exist add 1 to the current quantity value if not create a new order product
-            if(mapExistentProd.containsKey(p.Product2id)){
-                oi=mapExistentProd.get(p.Product2id);
+            if(mapExistentProd.containsKey(p.id)){
+                oi=mapExistentProd.get(p.id);
                 oi.Quantity+=1;
                 System.debug('addProductsToOrder exist oi:'+ oi);
             }else{

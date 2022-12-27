@@ -1,43 +1,36 @@
 public with sharing class orderProductLwc {
-/*   
+
+    //method used for wire adaptar when the page is loaded.
     @AuraEnabled(cacheable=true)  
-    public static List<OrderItem> getOrderProductsList(id orderid){  
-        
-        List<OrderItem> oiList= [SELECT Id, Product2id, Product2.Name, Quantity, UnitPrice, TotalPrice
-                From OrderItem 
-                where OrderId = :orderid];  
-
-        return oiList;
-
-    }
-*/
-   @AuraEnabled(cacheable=true)  
-    public static List<orderProductWrapper> getOrderProductsList(id orderId){  
+    public static List<orderProductWrapper> getInitialProductsList(id orderid){  
         
         system.debug('getOrderProductsList orderId:'+orderId);
-        list<orderProductWrapper> oiWrapperList = new list<orderProductWrapper>();
-        for ( OrderItem oi: [SELECT Id, Product2id, Product2.Name, Quantity, UnitPrice, TotalPrice
-                                    From OrderItem where OrderId = :orderid]  ){
-
-            oiWrapperList.add(new orderProductWrapper(oi));
-        }
-        system.debug('getOrderProductsList oiWrapperList:'+oiWrapperList);
+        list<orderProductWrapper> oiWrapperList = getOrderProductsList(orderId);
         return oiWrapperList;
     }
 
+    //method used in an imperative way when the order products table is refreshed from available products Component
     @AuraEnabled 
     public static List<orderProductWrapper> getOrderProductsListImperative(id orderid){  
         
-        system.debug('getOrderProductsList orderId:'+orderId);
-        list<orderProductWrapper> oiWrapperList = new list<orderProductWrapper>();
-        for ( OrderItem oi: [SELECT Id, Product2id, Product2.Name, Quantity, UnitPrice, TotalPrice
-                                    From OrderItem where OrderId = :orderid]  ){
-
-            oiWrapperList.add(new orderProductWrapper(oi));
-        }
-        system.debug('getOrderProductsList oiWrapperList:'+oiWrapperList);
+        list<orderProductWrapper> oiWrapperList = getOrderProductsList(orderId);
         return oiWrapperList;
     }
+
+    
+   @AuraEnabled
+   public static List<orderProductWrapper> getOrderProductsList(id orderid){  
+       
+       system.debug('getOrderProductsList orderId:'+orderId);
+       list<orderProductWrapper> oiWrapperList = new list<orderProductWrapper>();
+       for ( OrderItem oi: [SELECT Id, Product2id, Product2.Name, Quantity, UnitPrice, TotalPrice
+                                   From OrderItem where OrderId = :orderid]  ){
+
+           oiWrapperList.add(new orderProductWrapper(oi));
+       }
+       system.debug('getOrderProductsList oiWrapperList:'+oiWrapperList);
+       return oiWrapperList;
+   }
 
     @AuraEnabled
     public static void activateOrder(id orderid){  
@@ -57,7 +50,6 @@ public with sharing class orderProductLwc {
 
     }
 
-    
     public class orderProductWrapper{
         @AuraEnabled
         public OrderItem oi;

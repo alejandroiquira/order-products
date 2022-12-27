@@ -1,16 +1,21 @@
 import { LightningElement,wire,track,api} from 'lwc';  
   import {refreshApex} from '@salesforce/apex';  
-  import getOrderProducts from '@salesforce/apex/orderProductLwc.getOrderProductsList'; 
-  import getOrderProductsImperative from '@salesforce/apex/orderProductLwc.getOrderProductsListImperative';   
+  import getOrderProducts from '@salesforce/apex/orderProductLwc.getInitialProductsList'; 
+  import getRefreshedOrderProducts from '@salesforce/apex/orderProductLwc.getOrderProductsListImperative';   
   import activateOrder from '@salesforce/apex/orderProductLwc.activateOrder';  
   import { ShowToastEvent } from 'lightning/platformShowToastEvent'
   import { subscribe,MessageContext } from 'lightning/messageService';
   import UPDATE_ORDER_PRODUCT_FILE from '@salesforce/messageChannel/updateOrderProducts__c';
   const COLS=[  
-  {label:'Name:',fieldName:'Name', type:'text'},   
-  {label:'Quantity',fieldName:'Quantity', type:'number'}  ,   
-  {label:'Unit Price',fieldName:'UnitPrice', type:'currency'}  ,   
-  {label:'Total Price',fieldName:'TotalPrice', type:'currency'}  
+    {label:'Name',fieldName:'productLink', type:'url',
+    typeAttributes :{
+          label : {fieldName : 'Name'},
+          target : '_blank'
+      }
+    },   
+    {label:'Quantity',fieldName:'Quantity', type:'number'}  ,   
+    {label:'Unit Price',fieldName:'UnitPrice', type:'currency'}  ,   
+    {label:'Total Price',fieldName:'TotalPrice', type:'currency'}  
   ];  
 
   export default class DataTableInLwc extends LightningElement {  
@@ -44,7 +49,7 @@ import { LightningElement,wire,track,api} from 'lwc';
     }
     handleMessage(message){
         if(message.productAddedMessage == 'Product Added'){
-            getOrderProductsImperative({orderid : this.recordId})
+          getRefreshedOrderProducts({orderid : this.recordId})
             .then(result=>{
               this.products= result;
               return refreshApex(this.products);  
