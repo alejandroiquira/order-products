@@ -28,6 +28,50 @@ public with sharing class ProductUtility {
         return pricebookId;
     }
      
+    @AuraEnabled
+    public static void addProductsToOrder(List<PricebookEntry> productList, Id orderId){  
+         
+        System.debug('addProductsToOrder productList:'+ productList);
+        System.debug('addProductsToOrder orderId:'+ orderId);
+
+        Order o = [select pricebook2id  from order where id=: orderID];
+
+        if(o.pricebook2id==null){
+            o.pricebook2id = getPricebookid(orderId);
+            update o;
+        }
+        
+        
+        list<OrderItem> productsToUpsert = new list<OrderItem>();
+        
+        // Get current products related to the order
+        Map<Id, OrderItem> mapExistentProd = new Map<Id, OrderItem>();
+        for(OrderItem oi: [select id, Product2Id, Quantity from OrderItem where OrderId= :orderId]){
+            if(!mapExistentProd.containsKey(oi.Product2Id))
+                mapExistentProd.put(oi.Product2Id, oi);
+        }
+        System.debug('addProductsToOrder mapExistentProd:'+ mapExistentProd);
+
+        // Check if products sent as parameter already exist in the order
+        for(PricebookEntry p: productList){
+            OrderItem oi;
+            // If product already exist add 1 to the current quantity value if not create a new order product
+            if(mapExistentProd.containsKey(p.Product2id)){
+                oi=mapExistentProd.get(p.Product2id);
+                oi.Quantity+=1;
+                System.debug('addProductsToOrder exist oi:'+ oi);
+            }else{
+                oi=new OrderItem(orderid=orderId, Product2id=p.Product2id, Quantity=1, UnitPrice=p.UnitPrice, PricebookEntryId= p.id);
+                System.debug('addProductsToOrder NO exist oi:'+ oi);
+            }
+            productsToUpsert.add(oi);
+        } 
+        System.debug('addProductsToOrder productsToInsert:'+ productsToUpsert);
+        upsert productsToUpsert;
+
+    }  
+
+
 
     @AuraEnabled(cacheable=true)  
     public static List<OrderItem> getOrderProductsList(id orderid){  

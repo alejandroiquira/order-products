@@ -3,33 +3,58 @@ import { LightningElement,wire,track,api} from 'lwc';
   import getOrderProducts from '@salesforce/apex/ProductUtility.getOrderProductsList';  
   import activateOrder from '@salesforce/apex/ProductUtility.activateOrder';  
   import { ShowToastEvent } from 'lightning/platformShowToastEvent'
+  import { subscribe,MessageContext } from 'lightning/messageService';
+  import UPDATE_ORDER_PRODUCT_FILE from '@salesforce/messageChannel/updateOrderProducts__c';
   const COLS=[  
   {label:'Name',fieldName:'Product2.Name', type:'text'},   
-  {label:'Quantity',fieldName:'Quantity', type:'currency'}  ,   
+  {label:'Quantity',fieldName:'Quantity', type:'number'}  ,   
   {label:'Unit Price',fieldName:'UnitPrice', type:'currency'}  ,   
   {label:'Total Price',fieldName:'TotalPrice', type:'currency'}  
   ];  
 
   export default class DataTableInLwc extends LightningElement {  
-  @api recordId;
-  cols=COLS;  
-  products;
-  listaproductos =[];
+  
+    @api recordId;
+    cols=COLS;  
+    products;
 
-  @wire(getOrderProducts, {orderid: '$recordId'}) wireproductList (result){
-    if(result.data){
-        this.products=result.data;
+
+    @wire(getOrderProducts, {orderid: '$recordId'}) wireproductList (result){
+      if(result.data){
+          this.products=result.data;
+      }
+    };  
+
+    counter =0;
+    subscription = null;
+
+    @wire(MessageContext)
+    messageContext;
+
+    connectedCallback(){
+        this.subscribeToMessageChannel();
     }
-    
-  };  
-    
+    subscribeToMessageChannel(){
+        this.subscription = subscribe(
+            this.messageContext,
+            UPDATE_ORDER_PRODUCT_FILE,
+            (message) => this.handleMessage(message)
+        );
+    }
+    handleMessage(message){
+        if(message.operator == 'add'){
+            this.counter += message.constant;
+            return refreshApex(this.wireproductList);  
+        }
+    }
+      
     activateOrder(){
         
       console.log("ActivateOrder1");
       activateOrder({orderid : this.recordId}).then(result=>
         {
           console.log("ActivateOrder2");
-          this.showToast('Success', result, 'Success', 'dismissable');
+          this.showToast('Order activated. Please refresh the page.', result, 'Success', 'dismissable');
           //eval("$A.get('e.force:refreshView').fire();");
           this.updateRecordView();
         }

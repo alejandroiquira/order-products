@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningMessageChannel xmlns="https://soap.sforce.com/2006/04/metadata">
+    <masterLabel>updateOrderProducts</masterLabel>
+    <isExposed>True</isExposed>
+    <lightningMessageFields>
+        <fieldName>operator</fieldName>
+    </lightningMessageFields>
+    <lightningMessageFields>
+        <fieldName>constant</fieldName>
+    </lightningMessageFields>
+</LightningMessageChannel>
