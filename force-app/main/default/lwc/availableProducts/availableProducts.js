@@ -33,8 +33,7 @@ import { LightningElement,wire,track,api} from 'lwc';
         this.template.querySelector("lightning-datatable").getSelectedRows();  
         addProductsToOrder({productList: selectedRecords, orderId: this.recordId})  
         .then(result=>{  
-          console.log("addProducts selectedRecords"+selectedRecords[0]);
-          console.dir(selectedRecords);
+          console.log("addProducts selectedRecords",selectedRecords);
           const payload ={
               operator :'add',
               constant:1

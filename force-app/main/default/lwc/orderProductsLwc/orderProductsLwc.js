@@ -1,6 +1,7 @@
 import { LightningElement,wire,track,api} from 'lwc';  
   import {refreshApex} from '@salesforce/apex';  
-  import getOrderProducts from '@salesforce/apex/ProductUtility.getOrderProductsList';  
+  import getOrderProducts from '@salesforce/apex/ProductUtility.getOrderProductsList'; 
+  import getOrderProductsImperative from '@salesforce/apex/ProductUtility.getOrderProductsListImperative';   
   import activateOrder from '@salesforce/apex/ProductUtility.activateOrder';  
   import { ShowToastEvent } from 'lightning/platformShowToastEvent'
   import { subscribe,MessageContext } from 'lightning/messageService';
@@ -44,7 +45,15 @@ import { LightningElement,wire,track,api} from 'lwc';
     handleMessage(message){
         if(message.operator == 'add'){
             this.counter += message.constant;
-            return refreshApex(this.wireproductList);  
+            getOrderProductsImperative({orderid : this.recordId})
+            .then(result=>{
+              this.products= result;
+              return refreshApex(this.products);  
+            })
+            .catch(error=>{
+              alert('Error refreshing order product Added'+JSON.stringify(error));  
+            });
+            //return refreshApex(this.products);  
         }
     }
       

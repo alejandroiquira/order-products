@@ -10,7 +10,6 @@ public with sharing class ProductUtility {
                 From PricebookEntry 
                 where Pricebook2id=:pricebookId
                 limit 4];  
-
     }
 
     // Returns Order's pricebookId. If it does not have yet, return Standar pricebook Id
@@ -71,10 +70,17 @@ public with sharing class ProductUtility {
 
     }  
 
-
-
     @AuraEnabled(cacheable=true)  
     public static List<OrderItem> getOrderProductsList(id orderid){  
+        
+        return [SELECT Id, Product2id, Product2.Name, Quantity, UnitPrice, TotalPrice
+                From OrderItem 
+                where OrderId = :orderid];  
+
+    }
+
+    @AuraEnabled 
+    public static List<OrderItem> getOrderProductsListImperative(id orderid){  
         
         return [SELECT Id, Product2id, Product2.Name, Quantity, UnitPrice, TotalPrice
                 From OrderItem 
