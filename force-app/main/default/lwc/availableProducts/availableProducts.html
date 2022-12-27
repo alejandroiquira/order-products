@@ -1,9 +1,9 @@
 <template>  
-    
-    <lightning-input label="Search Product" value={searchKey} onchange={handleOnChange} type="search"></lightning-input>
-
-    <lightning-card title="Available products" icon-name="action:download">
-
+    <lightning-card title="Available products" icon-name="standard:product">
+        <lightning-input label="Type key word" value={searchKey} onchange={handleOnChange} type="search"></lightning-input>
+    </lightning-card>
+    <lightning-card>
+     
       <lightning-button 
         slot="actions" 
         label="Add to Order" 

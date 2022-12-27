@@ -1,9 +1,9 @@
 //Availableproducts.js
 import { LightningElement,wire,track,api} from 'lwc';  
  import {refreshApex} from '@salesforce/apex';  
- import gePriceBookProducts from '@salesforce/apex/ProductUtility.gePriceBookProducts';  
- import searchPriceBookProducts from '@salesforce/apex/ProductUtility.searchPriceBookProducts';  
- import addProductsToOrder from '@salesforce/apex/ProductUtility.addProductsToOrder';  
+ import gePriceBookProducts from '@salesforce/apex/availableProductLwc.gePriceBookProducts';  
+ import searchPriceBookProducts from '@salesforce/apex/availableProductLwc.searchPriceBookProducts';  
+ import addProductsToOrder from '@salesforce/apex/availableProductLwc.addProductsToOrder';  
  import { ShowToastEvent } from 'lightning/platformShowToastEvent'
  import {publish,MessageContext} from 'lightning/messageService';
  import UPDATE_ORDER_PRODUCT_FILE from '@salesforce/messageChannel/updateOrderProducts__c';
@@ -58,17 +58,20 @@ import { LightningElement,wire,track,api} from 'lwc';
         this.template.querySelector("lightning-datatable").getSelectedRows();  
         addProductsToOrder({productList: selectedRecords, orderId: this.recordId})  
         .then(result=>{  
-          console.log("addProducts selectedRecords",selectedRecords);
-          const payload ={
-            productAddedMessage :'Product Added'
-        };
-        publish(this.messageContext,UPDATE_ORDER_PRODUCT_FILE,payload);
-        this.showToast('Products added to the order.', result, 'Success', 'dismissable');
+            console.log("addProducts selectedRecords",selectedRecords);
+            const payload ={
+              productAddedMessage :'Product Added'
+          };
+          console.log("addProducts2");
+          publish(this.messageContext,UPDATE_ORDER_PRODUCT_FILE,payload);
+          this.showToast('Products added to the order.', result, 'Success', 'dismissable');
+          console.log("addProducts3");
         
-      })  
-      .catch(error=>{  
-        alert('Error getting Available products'+JSON.stringify(error));  
-      })  
+      })
+      .catch(error=>{
+        //alert('Error adding products to the Order'+JSON.stringify(error)); 
+        this.showToast('Error Adding products:', error.body.message, 'error', 'dismissable'); 
+      })
     }  
 
    

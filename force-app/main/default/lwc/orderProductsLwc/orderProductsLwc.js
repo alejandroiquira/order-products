@@ -41,6 +41,7 @@ import { LightningElement,wire,track,api} from 'lwc';
         this.subscribeToMessageChannel();
     }
     subscribeToMessageChannel(){
+      console.log("subscribeToMessageChannel 1");
         this.subscription = subscribe(
             this.messageContext,
             UPDATE_ORDER_PRODUCT_FILE,
@@ -48,7 +49,10 @@ import { LightningElement,wire,track,api} from 'lwc';
         );
     }
     handleMessage(message){
+      
+      console.log("subscribeToMessageChannel 2");
         if(message.productAddedMessage == 'Product Added'){
+          console.log("subscribeToMessageChannel 3");
           getRefreshedOrderProducts({orderid : this.recordId})
             .then(result=>{
               this.products= result;

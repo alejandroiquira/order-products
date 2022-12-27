@@ -9,7 +9,7 @@ public with sharing class orderProductLwc {
         return oiWrapperList;
     }
 
-    //method used in an imperative way when the order products table is refreshed from available products Component
+    //method used in an imperative way when order products table is refreshed from available products Component
     @AuraEnabled 
     public static List<orderProductWrapper> getOrderProductsListImperative(id orderid){  
         
@@ -17,8 +17,6 @@ public with sharing class orderProductLwc {
         return oiWrapperList;
     }
 
-    
-   @AuraEnabled
    public static List<orderProductWrapper> getOrderProductsList(id orderid){  
        
        system.debug('getOrderProductsList orderId:'+orderId);
