@@ -42,7 +42,6 @@ public with sharing class availableProductLwc {
                 update o;
             }
             
-            
             list<OrderItem> productsToUpsert = new list<OrderItem>();
             
             // Get current products related to the order
@@ -69,7 +68,6 @@ public with sharing class availableProductLwc {
             } 
             System.debug('addProductsToOrder productsToInsert:'+ productsToUpsert);
             upsert productsToUpsert;
-    
         }  
     
         // this wrapper allos to add the name of the product and its URL
