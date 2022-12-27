@@ -1,6 +1,6 @@
 public with sharing class orderProductLwc {
 
-    //method used for wire adaptar when the page is loaded.
+    //method used for wire adapter when the page is loaded.
     @AuraEnabled(cacheable=true)  
     public static List<orderProductWrapper> getInitialProductsList(id orderid){  
         
@@ -30,6 +30,7 @@ public with sharing class orderProductLwc {
        return oiWrapperList;
    }
 
+    //this method activates the order and the related contract
     @AuraEnabled
     public static void activateOrder(id orderid){  
 
@@ -48,6 +49,7 @@ public with sharing class orderProductLwc {
 
     }
 
+    // this wrapper allos to add the name of the product and its URL
     public class orderProductWrapper{
         @AuraEnabled
         public OrderItem oi;

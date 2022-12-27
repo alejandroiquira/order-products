@@ -14,19 +14,7 @@ public with sharing class availableProductLwc {
             }
             return apWrapperList;
         }
-    
-        @AuraEnabled
-        public static List<PricebookEntry> searchPriceBookProducts(Id orderId){  
-            
-            System.debug('getPriceBookProducts orderid'+orderId);
-            Id pricebookId = getPricebookid(orderId);
-            System.debug('getPriceBookProducts pricebookId'+pricebookId);
-            return [SELECT Id, Product2.Name, UnitPrice, Product2Id
-                    From PricebookEntry 
-                    where Pricebook2id=:pricebookId
-                    limit 4];  
-        }
-    
+        
         // Returns standard pricebookId if order pricebook is null
         public static Id getPricebookid(Id pricebookid){  
     
@@ -36,6 +24,7 @@ public with sharing class availableProductLwc {
             return pricebookId;
         }
          
+        //Add selected products to the order. If the order is "Activated" products cannot be added.
         @AuraEnabled
         public static void addProductsToOrder(List<PricebookEntry> productList, Id orderId){  
              
@@ -83,6 +72,7 @@ public with sharing class availableProductLwc {
     
         }  
     
+        // this wrapper allos to add the name of the product and its URL
         public class availableProductWrapper{
             @AuraEnabled
             public PricebookEntry pbe;

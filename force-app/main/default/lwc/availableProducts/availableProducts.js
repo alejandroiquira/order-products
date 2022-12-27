@@ -1,8 +1,6 @@
-//Availableproducts.js
-import { LightningElement,wire,track,api} from 'lwc';  
+ import { LightningElement,wire,track,api} from 'lwc';  
  import {refreshApex} from '@salesforce/apex';  
  import gePriceBookProducts from '@salesforce/apex/availableProductLwc.gePriceBookProducts';  
- import searchPriceBookProducts from '@salesforce/apex/availableProductLwc.searchPriceBookProducts';  
  import addProductsToOrder from '@salesforce/apex/availableProductLwc.addProductsToOrder';  
  import { ShowToastEvent } from 'lightning/platformShowToastEvent'
  import {publish,MessageContext} from 'lightning/messageService';
@@ -35,22 +33,11 @@ import { LightningElement,wire,track,api} from 'lwc';
     };  
    
     searchKey ='';
-
     handleOnChange(event){
         let key=event.target.value;
         console.log("Search key recordId:"+this.recordId);
         
-        /*searchPriceBookProducts({orderid : this.recordId})
-        .then(result=>{
-          console.log("ejecuta searchpricebookProducts");
-          this.products= result;
-        })
-        .catch(error=>{
-          alert('Error refreshing order product Added'+JSON.stringify(error));  
-        }); */
-
-
-    }
+      }
 
     addProducts(){  
       console.log("addProducts"+this.recordId);
